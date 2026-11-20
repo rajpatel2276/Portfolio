@@ -12,7 +12,7 @@ export const PROFILE = {
 
 // After you deploy with a custom domain, you can set it here, e.g. 'https://rajpatel.dev'.
 // Left empty, the QR uses whatever address the site is being served from.
-export const SITE_URL = ''
+export const SITE_URL = 'https://portfolio-three-hazel-87.vercel.app'
 export const RESUME_URL = (SITE_URL || window.location.origin) + PROFILE.resumePath
 
 export const ROTATING = ['Computer Vision', 'Deep Learning', 'Model Optimization', 'Multimodal RAG']
