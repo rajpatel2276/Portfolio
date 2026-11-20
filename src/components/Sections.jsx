@@ -68,8 +68,10 @@ export default function Sections({ active }) {
               <b>{p.no}</b>
               <span>
                 <strong>{p.title}</strong>
-                <br />
-                {p.line}
+                <span className="line">
+                  <br />
+                  {p.line}
+                </span>
                 <small className="stack">{p.stack}</small>
                 <Ext href={p.url}>Repository</Ext>
               </span>

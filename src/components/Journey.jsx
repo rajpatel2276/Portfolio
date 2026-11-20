@@ -28,7 +28,7 @@ function CameraRig({ bg }) {
   const lookCurve = useMemo(() => new THREE.CatmullRomCurve3(LOOK_POINTS, false, 'catmullrom', 0.5), [])
   const camPos = useMemo(() => new THREE.Vector3(), [])
   const lookPos = useMemo(() => new THREE.Vector3(), [])
-  const rig = useRef({ p: 0, px: 0, py: 0 })
+  const rig = useRef({ p: 0, px: 0, py: 0, rev: 0 })
 
   useFrame((state, delta) => {
     const cam = state.camera
@@ -37,6 +37,7 @@ function CameraRig({ bg }) {
     r.p = THREE.MathUtils.damp(r.p, scrollState.progress, 5, delta)
     r.px = THREE.MathUtils.damp(r.px, state.pointer.x, 3, delta)
     r.py = THREE.MathUtils.damp(r.py, state.pointer.y, 3, delta)
+    r.rev = THREE.MathUtils.damp(r.rev, scrollState.revealed ? 1 : 0, 2.5, delta)
 
     const f = THREE.MathUtils.clamp(r.p, 0, 1) * (STATIONS - 1)
     const k = Math.min(Math.floor(f), STATIONS - 2)
@@ -53,12 +54,24 @@ function CameraRig({ bg }) {
     camPos.x += swayX * 0.7 + r.px * 0.35
     camPos.y += swayY * 0.4 + r.py * 0.2
 
+    // widen the field of view while travelling for a sense of speed
+    const fov = 25 + 20 * Math.sin(te * Math.PI)
+
+    // portrait screens: slide the whole scene up so it sits above the text
+    const aspect = state.size.width / state.size.height
+    if (aspect < 1.1) {
+      const dist = camPos.distanceTo(lookPos)
+      const viewH = 2 * dist * Math.tan(THREE.MathUtils.degToRad(fov / 2))
+      const frac = THREE.MathUtils.lerp(0.2, 0.22, THREE.MathUtils.clamp(u * 4, 0, 1))
+      const shift = viewH * frac * r.rev
+      camPos.y -= shift
+      lookPos.y -= shift
+    }
+
     cam.position.copy(camPos)
     cam.lookAt(lookPos)
     cam.rotateZ(swayX * 0.04)
 
-    // widen the field of view while travelling for a sense of speed
-    const fov = 25 + 20 * Math.sin(te * Math.PI)
     if (Math.abs(cam.fov - fov) > 0.001) {
       cam.fov = fov
       cam.updateProjectionMatrix()
@@ -133,10 +146,13 @@ function Tunnel() {
 export default function Journey() {
   const bg = useRef()
   const { width, height } = useThree((s) => s.size)
-  const wide = width / height > 1.1
-  const ox = wide ? 3.4 : 0 // rooms sit on the right, text on the left
-  const oy = wide ? 0 : 1.4 // on phones: rooms up top, text below
-  const sc = wide ? 1 : 0.62
+  const aspect = width / height
+  const stacked = aspect < 1.1
+  const viewH = 2 * CAM_DIST * Math.tan(THREE.MathUtils.degToRad(25 / 2)) // visible height at a room
+  const viewW = viewH * aspect
+  const ox = stacked ? 0 : 3.4 // wide: rooms on the right, text on the left
+  const oy = 0 // on portrait screens the camera does the lifting
+  const sc = stacked ? Math.min(0.62, (viewW * 0.94) / 4.6, (viewH * 0.4) / 5.2) : 1
 
   return (
     <>

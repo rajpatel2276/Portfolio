@@ -11,7 +11,7 @@ export default function App() {
   const [revealed, setRevealed] = useState(false)
   const [active, setActiveIdx] = useState(0)
   // card hangs on the right on wide screens, centred on small ones
-  const [anchorX] = useState(() => (window.innerWidth > 900 ? 2.6 : 0))
+    const [anchorX] = useState(() => (window.innerWidth / window.innerHeight >= 1.1 ? 2.6 : 0))
 
   // smooth scrolling: locked until the card has been pulled down
   useEffect(() => {
@@ -46,6 +46,7 @@ export default function App() {
   useEffect(() => subscribeActive(setActiveIdx), [])
 
   const handleReveal = useCallback(() => {
+    scrollState.revealed = true
     setRevealed(true)
     lenisRef.current?.start()
   }, [])

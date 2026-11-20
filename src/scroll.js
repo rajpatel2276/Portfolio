@@ -1,7 +1,7 @@
 export const STATIONS = 5 // Home, About, Projects, Skills, Contact
 
 export const lenisRef = { current: null }
-export const scrollState = { progress: 0, velocity: 0, active: 0 }
+export const scrollState = { progress: 0, velocity: 0, active: 0, revealed: false }
 
 const subs = new Set()
 
