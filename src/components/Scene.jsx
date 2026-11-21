@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useFrame } from '@react-three/fiber'
 import { Environment, Lightformer } from '@react-three/drei'
 import { Physics } from '@react-three/rapier'
 import Lanyard from './Lanyard'
@@ -6,7 +7,23 @@ import NeuralField from './NeuralField'
 import Journey from './Journey'
 import { THEME } from '../theme'
 
-export default function Scene({ anchorX, onReveal }) {
+// mounts only after everything above it has finished loading, then waits a few
+// rendered frames so first-frame shader compilation happens behind the loader
+function ReadySignal({ onReady }) {
+  const frames = useRef(0)
+  const done = useRef(false)
+  useFrame(() => {
+    if (done.current) return
+    frames.current += 1
+    if (frames.current >= 8) {
+      done.current = true
+      onReady?.()
+    }
+  })
+  return null
+}
+
+export default function Scene({ anchorX, onReveal, onReady }) {
   // let the first heavy frames (texture upload, shader compile) pass before physics starts
   const [ready, setReady] = useState(false)
   useEffect(() => {
@@ -32,6 +49,7 @@ export default function Scene({ anchorX, onReveal }) {
 
       <Physics gravity={[0, -40, 0]} timeStep={1 / 60} interpolate={false} paused={!ready}>
         <Lanyard anchorX={anchorX} onReveal={onReveal} />
+        <ReadySignal onReady={onReady} />
       </Physics>
     </>
   )

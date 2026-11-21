@@ -6,9 +6,11 @@ import Hero from './components/Hero'
 import Sections from './components/Sections'
 import Hud from './components/Hud'
 import { lenisRef, scrollState, subscribeActive, STATIONS } from './scroll'
+import Loader from './components/Loader'
 
 export default function App() {
   const [revealed, setRevealed] = useState(false)
+  const [ready, setReady] = useState(false)
   const [active, setActiveIdx] = useState(0)
   // card hangs on the right on wide screens, centred on small ones
     const [anchorX] = useState(() => (window.innerWidth / window.innerHeight >= 1.1 ? 2.6 : 0))
@@ -51,6 +53,8 @@ export default function App() {
     lenisRef.current?.start()
   }, [])
 
+  const handleReady = useCallback(() => setReady(true), [])
+
   const atHome = revealed && active === 0
 
   return (
@@ -63,7 +67,7 @@ export default function App() {
         >
           <color attach="background" args={['#05060a']} />
           <Suspense fallback={null}>
-            <Scene anchorX={anchorX} onReveal={handleReveal} />
+            <Scene anchorX={anchorX} onReveal={handleReveal} onReady={handleReady} />
           </Suspense>
         </Canvas>
       </div>
@@ -75,7 +79,9 @@ export default function App() {
       <Sections active={active} />
       <Hud revealed={revealed} active={active} />
 
-            <div className="scroll-space" style={{ height: `${(STATIONS - 1) * 150 + 100}vh` }} />
+      <Loader ready={ready} />
+
+      <div className="scroll-space" style={{ height: `${(STATIONS - 1) * 150 + 100}vh` }} />
     </>
   )
 }
