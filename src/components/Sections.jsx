@@ -1,4 +1,5 @@
-import { PROFILE, FEATURED, MORE, SKILL_GROUPS } from '../content'
+import { PROFILE, FEATURED, MORE, SKILL_GROUPS, WORLD_INFO } from '../content'
+import { ST, scrollToStation } from '../scroll'
 
 function Panel({ on, eyebrow, title, text, children }) {
   return (
@@ -23,7 +24,7 @@ export default function Sections({ active }) {
   return (
     <>
       <Panel
-        on={active === 1}
+        on={active === ST.ABOUT}
         eyebrow="02 — About"
         title={
           <>
@@ -53,14 +54,14 @@ export default function Sections({ active }) {
       </Panel>
 
       <Panel
-        on={active === 2}
+        on={active === ST.PROJECTS}
         eyebrow="03 — Projects"
         title={
           <>
             Selected <span>work</span>
           </>
         }
-        text="Click a card in the scene, or use the links here, to open the repository."
+        text="Scroll on, or click a card, to step into each project’s world."
       >
         <ul className="facts">
           {FEATURED.map((p) => (
@@ -89,8 +90,40 @@ export default function Sections({ active }) {
         </p>
       </Panel>
 
+      {FEATURED.map((p, i) => {
+        const info = WORLD_INFO[p.key] || {}
+        const idx = ST.WORLD0 + i
+        const last = i === FEATURED.length - 1
+        return (
+          <Panel
+            key={p.key}
+            on={active === idx}
+            eyebrow={`03.${i + 1} — Project ${p.no}`}
+            title={<span>{p.title}</span>}
+            text={info.blurb || p.line}
+          >
+            <ul className="facts">
+              {(info.facts || []).map(([label, text], j) => (
+                <li key={label} className={j >= 3 ? 'opt' : ''}>
+                  <b>{label}</b>
+                  <span>{text}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="cta">
+              <a className="btn primary" href={p.url} target="_blank" rel="noreferrer noopener">
+                View repository ↗
+              </a>
+              <button className="btn" onClick={() => scrollToStation(idx + 1)}>
+                {last ? 'Continue ↓' : 'Next world ↓'}
+              </button>
+            </div>
+          </Panel>
+        )
+      })}
+
       <Panel
-        on={active === 3}
+        on={active === ST.SKILLS}
         eyebrow="04 — Skills"
         title={
           <>
@@ -114,7 +147,7 @@ export default function Sections({ active }) {
       </Panel>
 
       <Panel
-        on={active === 4}
+        on={active === ST.CONTACT}
         eyebrow="05 — Contact"
         title={
           <>

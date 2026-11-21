@@ -1,7 +1,19 @@
 import { useEffect, useState } from 'react'
-import { scrollToStation } from '../scroll'
+import { scrollToStation, ST, STATION_INFO } from '../scroll'
+import { FEATURED } from '../content'
 
-const NAMES = ['Home', 'About', 'Projects', 'Skills', 'Contact']
+const NAV = [
+  ['About', ST.ABOUT],
+  ['Projects', ST.PROJECTS],
+  ['Skills', ST.SKILLS],
+  ['Contact', ST.CONTACT],
+]
+
+// side dots: the Projects overview, then one per world
+const DOTS = [
+  { st: ST.PROJECTS, label: 'Projects overview' },
+  ...FEATURED.map((p, i) => ({ st: ST.WORLD0 + i, label: p.title })),
+]
 
 export default function Hud({ revealed, active }) {
   const [last, setLast] = useState(0)
@@ -10,8 +22,10 @@ export default function Hud({ revealed, active }) {
   }, [active])
 
   const cur = active >= 0 ? active : last
+  const info = STATION_INFO[cur]
   const cls = revealed ? 'show' : ''
   const home = revealed && active === 0
+  const inProjects = revealed && info.nav === 'Projects'
 
   return (
     <>
@@ -19,15 +33,29 @@ export default function Hud({ revealed, active }) {
       <div className={`logo ${cls}`}>
         RP<span>.</span>
       </div>
+
       <nav className={`nav ${cls}`}>
-        {NAMES.slice(1).map((n, i) => (
-          <button key={n} className={cur === i + 1 ? 'on' : ''} onClick={() => scrollToStation(i + 1)}>
-            {n}
+        {NAV.map(([name, st]) => (
+          <button key={name} className={info.nav === name ? 'on' : ''} onClick={() => scrollToStation(st)}>
+            {name}
           </button>
         ))}
       </nav>
+
+      <div className={`world-dots ${inProjects ? 'show' : ''}`}>
+        {DOTS.map((d) => (
+          <button
+            key={d.st}
+            className={cur === d.st ? 'on' : ''}
+            title={d.label}
+            aria-label={d.label}
+            onClick={() => scrollToStation(d.st)}
+          />
+        ))}
+      </div>
+
       <div className={`section-index ${cls}`}>
-        0{cur + 1} — {NAMES[cur]}
+        {info.index} — {info.label}
       </div>
       <div className={`drag-hint ${home ? 'show' : ''}`}>Drag to swing · Click to flip</div>
       <div className={`scroll-hint ${home ? 'show' : ''}`}>Scroll to explore</div>

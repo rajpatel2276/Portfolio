@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { scrollToStation } from '../scroll'
+import { scrollToStation, ST } from '../scroll'
 import { PROFILE, ROTATING } from '../content'
 
 function Rotator() {
@@ -32,10 +32,10 @@ export default function Hero({ show }) {
         infrastructure.
       </p>
       <div className="cta">
-        <button className="btn primary" onClick={() => scrollToStation(2)}>
+        <button className="btn primary" onClick={() => scrollToStation(ST.PROJECTS)}>
           View my work
         </button>
-        <button className="btn" onClick={() => scrollToStation(4)}>
+        <button className="btn" onClick={() => scrollToStation(ST.CONTACT)}>
           Get in touch
         </button>
       </div>

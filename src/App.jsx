@@ -5,7 +5,7 @@ import Scene from './components/Scene'
 import Hero from './components/Hero'
 import Sections from './components/Sections'
 import Hud from './components/Hud'
-import { lenisRef, scrollState, subscribeActive } from './scroll'
+import { lenisRef, scrollState, subscribeActive, STATIONS } from './scroll'
 
 export default function App() {
   const [revealed, setRevealed] = useState(false)
@@ -75,7 +75,7 @@ export default function App() {
       <Sections active={active} />
       <Hud revealed={revealed} active={active} />
 
-      <div className="scroll-space" />
+            <div className="scroll-space" style={{ height: `${(STATIONS - 1) * 150 + 100}vh` }} />
     </>
   )
 }

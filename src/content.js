@@ -67,3 +67,38 @@ export const SKILL_SPHERE = [
   'NumPy', 'Pandas', 'SciPy', 'Librosa', 'Matplotlib', 'Python', 'C++', 'Java',
   'SQL', 'CUDA', 'Git', 'Linux', 'Conda',
 ]
+
+
+// text shown in each project's world panel
+export const WORLD_INFO = {
+  shastra: {
+    blurb:
+      'A containerized multimodal RAG and claim-verification system that runs with zero GPU memory. CLIP text and vision encoders are exported to CPU-optimized ONNX Runtime and paired with a cross-encoder reranker.',
+    facts: [
+      ['Runs on', 'CPU only · 0 MiB GPU memory'],
+      ['Encoders', 'CLIP text + vision (ONNX Runtime)'],
+      ['Reranker', 'ms-marco-MiniLM-L-6-v2 cross-encoder'],
+      ['Delivery', 'Containerized'],
+    ],
+  },
+  traffic: {
+    blurb:
+      'A vehicle tracking pipeline built on YOLOv8 and SORT in a CUDA environment, reaching real-time inference at 45 FPS.',
+    facts: [
+      ['Speed', '45 FPS real-time inference'],
+      ['Tuning', 'NMS thresholds and anchor box scales'],
+      ['Outcome', 'Fewer tracking errors in crowded scenes'],
+      ['Stack', 'YOLOv8 · SORT · CUDA'],
+    ],
+  },
+  rag: {
+    blurb:
+      'A fully offline, GPU-accelerated RAG pipeline for securely querying computer vision research papers, returning text citations along with the matching architecture diagrams.',
+    facts: [
+      ['Backend', 'FastAPI · Qdrant · Llama 3.2'],
+      ['Parsing', 'PyMuPDF for text citations and diagrams'],
+      ['Privacy', '100% offline'],
+      ['Delivery', 'Containerized'],
+    ],
+  },
+}

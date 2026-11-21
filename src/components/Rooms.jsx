@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import { THEME, rgba } from '../theme'
 import { PulseLines, Label, buildLines, makeGlowTexture, mulberry } from './fx'
 import { FEATURED, SKILL_SPHERE } from '../content'
+import { scrollToStation, ST } from '../scroll'
 
 function additive(extra = {}) {
   return { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, ...extra }
@@ -286,7 +287,7 @@ function cardTexture({ no, title, tag, key, color }) {
   ctx.font = `600 24px ${MONO}`
   ctx.fillText(`PROJECT / ${no}`, 44, 62)
   ctx.textAlign = 'right'
-  ctx.fillText('GITHUB ↗', W - 44, 62)
+    ctx.fillText('ENTER WORLD →', W - 44, 62)
 
   ctx.textAlign = 'left'
   let size = 54
@@ -360,7 +361,7 @@ function ProjectCard({ data, index, glow }) {
         }}
         onClick={(e) => {
           e.stopPropagation()
-          window.open(data.url, '_blank', 'noopener,noreferrer')
+                    scrollToStation(ST.WORLD0 + index)
         }}
       >
         <planeGeometry args={[2.7, 1.6875]} />
@@ -393,7 +394,7 @@ export function ProjectsRoom() {
       {PROJECTS.map((p, i) => (
         <ProjectCard key={p.no} data={p} index={i} glow={glow} />
       ))}
-      <Label text="CLICK TO OPEN" color={THEME.primarySoft} position={[0, -2.95, 0.6]} height={0.15} />
+      <Label text="ENTER A WORLD" color={THEME.primarySoft} position={[0, -2.95, 0.6]} height={0.15} />
     </group>
   )
 }
