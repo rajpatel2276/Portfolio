@@ -5,6 +5,7 @@ import { THEME, rgba } from '../theme'
 import { PulseLines, Label, buildLines, makeGlowTexture, mulberry } from './fx'
 import { FEATURED, SKILL_SPHERE } from '../content'
 import { scrollToStation, ST } from '../scroll'
+import { useQuality } from '../quality'
 
 function additive(extra = {}) {
   return { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, ...extra }
@@ -530,13 +531,14 @@ function arcPoints(a, b, ang, seg = 48) {
 }
 
 export function ContactRoom() {
+  const q = useQuality()
   const globe = useRef()
   const rings = useRef([])
   const dot = useMemo(() => makeGlowTexture(), [])
 
   const { dots, ends, arcs } = useMemo(() => {
     const rand = mulberry(21)
-    const N = 2600
+    const N = q.globe
     const kept = []
     for (let i = 0; i < N; i++) {
       const y = 1 - ((i + 0.5) * 2) / N
@@ -578,7 +580,7 @@ export function ContactRoom() {
       ends: new THREE.BufferGeometry().setFromPoints(endPts),
       arcs: buildLines(curves),
     }
-  }, [])
+  }, [q.globe])
 
   useFrame((s, d) => {
     const t = s.clock.elapsedTime

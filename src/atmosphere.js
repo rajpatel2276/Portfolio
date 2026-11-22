@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
 import { THEME } from './theme'
 import { scrollState, STATION_INFO, STATIONS } from './scroll'
+import { getQuality, warm } from './quality'
 
 // one palette per project world, keyed by the project's `key` in content.js
 export const WORLD_THEME = {
@@ -47,7 +48,7 @@ export const stationOf = (key) => STATION_INFO.findIndex((s) => s.world === key)
 // runs cb only while this station is near the camera, and hides the group when it is not
 export function useRoomFrame(index, cb, groupRef) {
   useFrame((state, delta) => {
-    const near = Math.abs(scrollState.pos - index) < 1.6
+        const near = warm.on || Math.abs(scrollState.pos - index) < getQuality().near
     const g = groupRef && groupRef.current
     if (g && g.visible !== near) g.visible = near
     if (near) cb(state, delta)

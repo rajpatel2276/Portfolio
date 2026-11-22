@@ -7,6 +7,7 @@ import { atmo, updateAtmosphere, WORLD_THEME } from '../atmosphere'
 import { AboutRoom, ProjectsRoom, SkillsRoom, ContactRoom } from './Rooms'
 import { WORLD_COMPONENTS, Gate } from './Worlds'
 import { THEME } from '../theme'
+import { getQuality, useQuality, warm } from '../quality'
 
 const CAM_DIST = 14 // how far the camera rests in front of each room
 const SPACING = 30
@@ -28,6 +29,20 @@ const B = 0.78
 function plateau(t) {
   const x = THREE.MathUtils.clamp((t - A) / (B - A), 0, 1)
   return x * x * x * (x * (x * 6 - 15) + 10)
+}
+
+// hides a room when it is far from the camera, so the GPU only draws what is near
+function Station({ index, children, ...props }) {
+  const ref = useRef()
+  useFrame(() => {
+    const near = warm.on || Math.abs(scrollState.pos - index) < getQuality().near
+    if (ref.current && ref.current.visible !== near) ref.current.visible = near
+  })
+  return (
+    <group ref={ref} {...props}>
+      {children}
+    </group>
+  )
 }
 
 function CameraRig({ bg }) {
@@ -102,6 +117,7 @@ function CameraRig({ bg }) {
 const RINGS = Math.ceil(TUNNEL_LEN / 3)
 
 function Tunnel() {
+  const q = useQuality()
   const rings = useRef()
   const ringMat = useRef()
   const lineMat = useRef()
@@ -128,7 +144,7 @@ function Tunnel() {
   }, [])
 
   const dust = useMemo(() => {
-    const n = 1600
+    const n = q.dust
     const arr = new Float32Array(n * 3)
     for (let i = 0; i < n; i++) {
       const a = Math.random() * Math.PI * 2
@@ -140,7 +156,7 @@ function Tunnel() {
     const g = new THREE.BufferGeometry()
     g.setAttribute('position', new THREE.BufferAttribute(arr, 3))
     return g
-  }, [])
+  }, [q.dust])
 
   // the tunnel takes on the colours of whichever world you are heading into
   useFrame(() => {
@@ -166,6 +182,7 @@ function Tunnel() {
 }
 
 export default function Journey() {
+  const q = useQuality()
   const bg = useRef()
   const { width, height } = useThree((s) => s.size)
   const aspect = width / height
@@ -181,7 +198,7 @@ export default function Journey() {
       <CameraRig bg={bg} />
 
       <group ref={bg}>
-        <Stars radius={100} depth={60} count={4000} factor={4} fade speed={1} />
+        <Stars radius={100} depth={60} count={q.stars} factor={4} fade speed={1} />
       </group>
 
       <Tunnel />
@@ -196,9 +213,9 @@ export default function Journey() {
         else if (i === ST.CONTACT) Room = ContactRoom
         if (!Room) return null
         return (
-          <group key={i} position={[ox, oy, roomZ(i)]} scale={sc}>
+          <Station key={i} index={i} position={[ox, oy, roomZ(i)]} scale={sc}>
             <Room />
-          </group>
+          </Station>
         )
       })}
 

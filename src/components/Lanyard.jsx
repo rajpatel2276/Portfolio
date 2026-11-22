@@ -54,7 +54,7 @@ export default function Lanyard({ anchorX = 0, onReveal }) {
   )
 
   // textures
-  const photo = useTexture('/photo.png')
+  const photo = useTexture('/photo.webp')
   const frontTex = useMemo(() => makeFrontTexture(photo.image), [photo])
   const backTex = useMemo(() => makeBackTexture(RESUME_URL), [])
   const strapTex = useMemo(() => makeStrapTextures(), [])

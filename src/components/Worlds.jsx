@@ -3,6 +3,7 @@ import { useMemo, useRef } from 'react'
 import { PulseLines, Label, buildLines, makeGlowTexture, mulberry } from './fx'
 import { rgba } from '../theme'
 import { WORLD_THEME, stationOf, useRoomFrame } from '../atmosphere'
+import { useQuality } from '../quality'
 
 function additive(extra = {}) {
   return { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, ...extra }
@@ -367,6 +368,7 @@ function Car({ idx, def, boxGeo, glow }) {
 }
 
 export function TrafficWorld() {
+  const q = useQuality()
   const idx = stationOf('traffic')
   const root = useRef()
   const tilt = useRef()
@@ -428,7 +430,7 @@ export function TrafficWorld() {
           <meshBasicMaterial map={road} toneMapped={false} />
         </mesh>
 
-        {CAR_DEFS.map((def) => (
+        {CAR_DEFS.filter((d, i) => i % 3 < q.cars).map((def) => (
           <Car key={def.id} idx={idx} def={def} boxGeo={boxGeo} glow={glow} />
         ))}
 

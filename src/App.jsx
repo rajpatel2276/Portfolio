@@ -7,13 +7,18 @@ import Sections from './components/Sections'
 import Hud from './components/Hud'
 import { lenisRef, scrollState, subscribeActive, STATIONS } from './scroll'
 import Loader from './components/Loader'
+import DebugBadge from './components/DebugBadge'
+import { getQuality, useQuality } from './quality'
 
 export default function App() {
+  const q = useQuality()
+  // antialiasing can only be chosen when the canvas is created, so it is fixed at load
+  const [glProps] = useState(() => ({ antialias: getQuality().antialias, powerPreference: 'high-performance' }))
   const [revealed, setRevealed] = useState(false)
   const [ready, setReady] = useState(false)
   const [active, setActiveIdx] = useState(0)
   // card hangs on the right on wide screens, centred on small ones
-    const [anchorX] = useState(() => (window.innerWidth / window.innerHeight >= 1.1 ? 2.6 : 0))
+  const [anchorX] = useState(() => (window.innerWidth / window.innerHeight >= 1.1 ? 2.6 : 0))
 
   // smooth scrolling: locked until the card has been pulled down
   useEffect(() => {
@@ -62,8 +67,8 @@ export default function App() {
       <div className="canvas-wrap">
         <Canvas
           camera={{ position: [0, 0, 13], fov: 25 }}
-          dpr={[1, 2]}
-          gl={{ antialias: true }}
+          dpr={[0.75, q.dprMax]}
+          gl={glProps}
         >
           <color attach="background" args={['#05060a']} />
           <Suspense fallback={null}>
@@ -79,6 +84,7 @@ export default function App() {
       <Sections active={active} />
       <Hud revealed={revealed} active={active} />
 
+      <DebugBadge />
       <Loader ready={ready} />
 
       <div className="scroll-space" style={{ height: `${(STATIONS - 1) * 150 + 100}vh` }} />
