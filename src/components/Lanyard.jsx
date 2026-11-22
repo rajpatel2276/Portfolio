@@ -13,6 +13,7 @@ import { makeFrontTexture, makeBackTexture } from './cardTextures'
 import { makeStrapTextures, STRAP_W, STRAP_TILE } from './strapTexture'
 import { THEME } from '../theme'
 import { RESUME_URL } from '../content'
+import { scrollState, STATIONS } from '../scroll'
 
 const CARD_W = 1.6
 const CARD_H = 2.25
@@ -38,6 +39,8 @@ export default function Lanyard({ anchorX = 0, onReveal }) {
   const downInfo = useRef({ x: 0, y: 0, t: 0 })
   const flipState = useRef({ angle: 0, vel: 0, target: 0 })
   const kick = useRef(0)
+  const scrollRx = useRef({ lastP: 0, lastPos: 0, v: 0, pv: 0, g: 1, dirX: anchorX >= 0 ? 1 : -1 })
+  const reduceMotion = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, [])
   const lastFlip = useRef(0)
   const flipped = useRef(false)
 
@@ -184,6 +187,43 @@ export default function Lanyard({ anchorX = 0, onReveal }) {
     if (tabRef.current) tabRef.current.position.y = Math.sin(state.clock.elapsedTime * 2.2) * 0.08
 
     if (!fixed.current || !card.current) return
+
+        // ---- scroll reaction: the lanyard is blown about and lifted while you scroll ----
+    {
+      const sc = scrollRx.current
+      const dt = Math.max(delta, 1 / 240)
+      const p = scrollState.progress
+      const pos = scrollState.pos
+      sc.v = THREE.MathUtils.damp(sc.v, ((p - sc.lastP) / dt) * (STATIONS - 1), 9, delta) // scroll speed, stations/s
+      sc.pv = THREE.MathUtils.damp(sc.pv, (pos - sc.lastPos) / dt, 9, delta) // camera speed, stations/s
+      sc.lastP = p
+      sc.lastPos = pos
+
+      const live = phase === 'free' && !dragged && !reduceMotion && pos < 0.8
+      // wake of the camera flying past the card
+      const whoosh =
+        THREE.MathUtils.clamp(sc.pv / 2.5, -1.5, 1.5) * Math.max(0, 1 - Math.abs(state.camera.position.z) / 10)
+      const a = live ? THREE.MathUtils.clamp(sc.v / 1.5 + whoosh, -1.8, 1.8) : 0
+      const chain = [j1, j2, j3, card]
+
+      if (Math.abs(a) > 0.02) {
+        const dd = Math.min(delta, 0.05)
+        const wind = a * 12 * sc.dirX // sideways gust, outward when scrolling forward
+        chain.forEach((r) => {
+          const b = r.current
+          if (!b) return
+          const m = b.mass()
+          b.applyImpulse({ x: m * wind * dd, y: 0, z: -m * 8 * a * dd }, true)
+        })
+      }
+
+      // lighter while scrolling forward (the tug), heavier when scrolling back
+      const g = a > 0 ? 1 - 0.65 * Math.min(a, 1) : 1 + 0.4 * Math.min(-a, 1)
+      if (Math.abs(g - sc.g) > 0.01) {
+        chain.forEach((r) => r.current && r.current.setGravityScale(g, true))
+        sc.g = g
+      }
+    }
 
     // little swing when the card flips
     if (kick.current && !dragged && phase === 'free') {
