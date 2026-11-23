@@ -15,6 +15,8 @@ const DOTS = [
   ...FEATURED.map((p, i) => ({ st: ST.WORLD0 + i, label: p.title })),
 ]
 
+const BASE_TITLE = 'Raj Patel — ML Engineer | Computer Vision and Deep Learning'
+
 export default function Hud({ revealed, active }) {
   const [last, setLast] = useState(0)
   useEffect(() => {
@@ -26,6 +28,10 @@ export default function Hud({ revealed, active }) {
   const cls = revealed ? 'show' : ''
   const home = revealed && active === 0
   const inProjects = revealed && info.nav === 'Projects'
+
+  useEffect(() => {
+    document.title = cur === 0 ? BASE_TITLE : `${info.label} · Raj Patel`
+  }, [cur, info.label])
 
   return (
     <>
