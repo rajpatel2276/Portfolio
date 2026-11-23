@@ -754,3 +754,18 @@ html.lenis body {
   color: var(--cream);
   pointer-events: none;
 }
+
+
+/* ---------- "put the card back" button ---------- */
+.btn.again {
+  border-color: rgba(var(--accent-rgb), 0.6);
+  color: var(--accent-soft);
+  animation: againIn 0.5s ease both;
+}
+.btn.again:hover {
+  border-color: var(--accent);
+}
+@keyframes againIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}

@@ -63,7 +63,7 @@ export default function Hud({ revealed, active }) {
       <div className={`section-index ${cls}`}>
         {info.index} — {info.label}
       </div>
-      <div className={`drag-hint ${home ? 'show' : ''}`}>Drag to swing · Click to flip</div>
+      <div className={`drag-hint ${home ? 'show' : ''}`}>Drag to swing · Click to flip · Pop the clip</div>
       <div className={`scroll-hint ${home ? 'show' : ''}`}>Scroll to explore</div>
     </>
   )

@@ -54,7 +54,7 @@ function Adaptive() {
   return <PerformanceMonitor onDecline={() => move(-1)} onIncline={() => move(1)} />
 }
 
-export default function Scene({ anchorX, onReveal, onReady }) {
+export default function Scene({ anchorX, onReveal, onReady, onDrop }) {
   const q = useQuality()
   const [envRes] = useState(() => getQuality().envRes) // fixed at load, no rebuild on tier change
 
@@ -90,7 +90,7 @@ export default function Scene({ anchorX, onReveal, onReady }) {
       <NeuralField count={q.nodes} reach={q.nodeReach} />
 
       <Physics gravity={[0, -40, 0]} timeStep={1 / 60} interpolate={false} paused={!ready}>
-        <Lanyard anchorX={anchorX} onReveal={onReveal} />
+        <Lanyard anchorX={anchorX} onReveal={onReveal} onDrop={onDrop} />
         <ReadySignal onReady={handleReady} />
       </Physics>
 

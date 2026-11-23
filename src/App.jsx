@@ -16,6 +16,7 @@ export default function App() {
   const [glProps] = useState(() => ({ antialias: getQuality().antialias, powerPreference: 'high-performance' }))
   const [revealed, setRevealed] = useState(false)
   const [ready, setReady] = useState(false)
+  const [dropped, setDropped] = useState(false)
   const [active, setActiveIdx] = useState(0)
   // card hangs on the right on wide screens, centred on small ones
   const [anchorX] = useState(() => (window.innerWidth / window.innerHeight >= 1.1 ? 2.6 : 0))
@@ -72,7 +73,7 @@ export default function App() {
         >
           <color attach="background" args={['#05060a']} />
           <Suspense fallback={null}>
-            <Scene anchorX={anchorX} onReveal={handleReveal} onReady={handleReady} />
+            <Scene anchorX={anchorX} onReveal={handleReveal} onReady={handleReady} onDrop={setDropped} />
           </Suspense>
         </Canvas>
       </div>
@@ -80,7 +81,7 @@ export default function App() {
       <div className="vignette" />
       <div className={`glow ${atHome ? 'show' : ''}`} />
 
-      <Hero show={atHome} />
+      <Hero show={atHome} dropped={dropped} />
       <Sections active={active} />
       <Hud revealed={revealed} active={active} />
 

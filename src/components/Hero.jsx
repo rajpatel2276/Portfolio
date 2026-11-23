@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { scrollToStation, ST } from '../scroll'
+import { scrollToStation, ST, cardBus } from '../scroll'
 import { PROFILE, ROTATING } from '../content'
 
 function Rotator() {
@@ -15,7 +15,7 @@ function Rotator() {
   )
 }
 
-export default function Hero({ show }) {
+export default function Hero({ show, dropped }) {
   const [first, last] = PROFILE.name.split(' ')
   return (
     <main className={`hero ${show ? 'show' : ''}`}>
@@ -38,6 +38,11 @@ export default function Hero({ show }) {
         <button className="btn" onClick={() => scrollToStation(ST.CONTACT)}>
           Get in touch
         </button>
+        {dropped && (
+          <button className="btn again" onClick={() => cardBus.reattach && cardBus.reattach()}>
+            ↺ Put the card back
+          </button>
+        )}
       </div>
     </main>
   )

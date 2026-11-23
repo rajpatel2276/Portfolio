@@ -52,3 +52,6 @@ export function scrollToStation(i) {
   const dist = Math.abs(i - scrollState.pos)
   l.scrollTo((i / (STATIONS - 1)) * l.limit, { duration: Math.min(4, 1.4 + dist * 0.45) })
 }
+
+// lets the hero's "Put the card back" button talk to the card inside the 3D scene
+export const cardBus = { reattach: null }
