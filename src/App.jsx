@@ -7,6 +7,7 @@ import Sections from './components/Sections'
 import Hud from './components/Hud'
 import { lenisRef, scrollState, subscribeActive, STATIONS } from './scroll'
 import Loader from './components/Loader'
+import NeuralLab from './components/NeuralLab'
 import DebugBadge from './components/DebugBadge'
 import { getQuality, useQuality } from './quality'
 
@@ -86,6 +87,7 @@ export default function App() {
       <Hud revealed={revealed} active={active} />
 
       <DebugBadge />
+      <NeuralLab />
       <Loader ready={ready} />
 
       <div className="scroll-space" style={{ height: `${(STATIONS - 1) * 150 + 100}vh` }} />

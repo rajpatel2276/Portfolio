@@ -1,5 +1,6 @@
 import { PROFILE, FEATURED, MORE, SKILL_GROUPS, WORLD_INFO } from '../content'
 import { ST, scrollToStation } from '../scroll'
+import { labBus } from '../lab/bus'
 
 function Panel({ on, eyebrow, title, text, children }) {
   return (
@@ -143,6 +144,11 @@ export default function Sections({ active }) {
               </div>
             </div>
           ))}
+        </div>
+        <div className="cta">
+          <button className="btn primary" onClick={() => labBus.open && labBus.open()}>
+            ⚡ Train a tiny network
+          </button>
         </div>
       </Panel>
 
